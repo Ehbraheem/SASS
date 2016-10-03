@@ -3,11 +3,22 @@ class MoviesController < ApplicationController
   def movie_params
     params.require(:movie).permit(:title, :rating, :description, :release_date, :director)
   end
-
+  
   def show
+    # debugger
     id = params[:id] # retrieve movie ID from URI route
     @movie = Movie.find(id) # look up movie by unique ID
+    session[:movie] = @movie.title # helper to 
     # will render app/views/movies/show.<extension> by default
+  end
+  
+  def same_director
+    # debugger
+    dir = params[:format]
+    title = session[:movie]
+    # dir = Movie.find_by_title(title).director
+    redirect_to movies_path and flash[:notice] = "'#{title}' has no director info"  unless !(dir.nil? || dir.empty?)
+    @movies = Movie.same_director dir
   end
 
   def index
@@ -45,6 +56,7 @@ class MoviesController < ApplicationController
 
   def edit
     @movie = Movie.find params[:id]
+    # debugger
   end
 
   def update
